@@ -21,7 +21,7 @@ var shot_speed = 0.2;
 var geometry = new THREE.PlaneGeometry(1.5, 0.5, 32);
 var material = new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide });
 const shot = new THREE.Mesh(geometry, material);
-var vector_shot = null;
+shot.position.set(1000, 1000, 0)
 
 scene.add(shot);
 
@@ -78,13 +78,14 @@ const teacherShot = (time) => {
   if(time - shot_timer >  shot_delay) {
     shot_timer = time;
     shot.position.copy(teacher.position);
-    x =  player.position.x - teacher.position.x;
-    y =  player.position.y - teacher.position.y;
-    vector_shot = new THREE.Vector3( x, y, 0).normalize();
+    var x =  player.position.x - teacher.position.x;
+    var y =  player.position.y - teacher.position.y;
+    var vector_shot = new THREE.Vector3(x, y, 0);
+    var angle = Math.atan2(vector_shot.y, vector_shot.x)
+    shot.rotation.z = angle;
   }
   
-  
-  if (vector_shot) shot.position.addScaledVector(vector_shot, 0.1);
+  shot.translateX(shot_speed);
 }
 
 const playerMovement = (key) => {
