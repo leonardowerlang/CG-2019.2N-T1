@@ -86,6 +86,14 @@ const teacherShot = (time) => {
   }
   
   shot.translateX(shot_speed);
+  if (shot.position.distanceTo(player.position) < 1.5)  reset();
+}
+
+const reset = () => {
+  player.position.set(0, 0, 0);
+  teacher.position.set(0, 0, 0);
+  shot.position.set(1000, 1000, 0);
+  shot_timer = null;
 }
 
 const playerMovement = (key) => {
