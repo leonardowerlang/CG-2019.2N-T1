@@ -1,4 +1,5 @@
 var emilio_face_url = "./emilio_face.png";
+var reproved = "./reproved.png";
 
 var scene = new THREE.Scene();
 var aspect = window.innerHeight / window.innerWidth
@@ -18,8 +19,10 @@ var shot_delay = 5000;
 var shot_timer = null;
 var shot_speed = 0.2;
 
-var geometry = new THREE.PlaneGeometry(1.5, 0.5, 32);
-var material = new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide });
+var geometry = new THREE.PlaneGeometry(2, 0.5, 32);
+var texture = new THREE.TextureLoader().load(reproved);
+var material = new THREE.MeshBasicMaterial();
+material.map = texture;
 const shot = new THREE.Mesh(geometry, material);
 shot.position.set(1000, 1000, 0)
 
