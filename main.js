@@ -7,7 +7,7 @@ var width = 16;
 var height = 9;
 
 var player_size = 1.5;
-var mov_speed = 0.2;
+var mov_speed = 0.15;
 
 var max_teacher_speed = 0.1;
 var teacher_size = 2;
@@ -18,6 +18,8 @@ var dicrection = new THREE.Vector3(randon_x, randon_y, 0);
 var shot_delay = 5000;
 var shot_timer = null;
 var shot_speed = 0.2;
+
+var keys_pressed = [];
 
 var geometry = new THREE.PlaneGeometry(2, 0.5, 32);
 var texture = new THREE.TextureLoader().load(reproved);
@@ -58,6 +60,7 @@ const render = (time) => {
   requestAnimationFrame(render);
   teacherMovement();
   teacherShot(time);
+  playerMovement();
 
   renderer.render(scene, camera);
 }
@@ -99,7 +102,7 @@ const reset = () => {
   shot_timer = null;
 }
 
-const playerMovement = (key) => {
+const playerMovementByKey = (key) => {
   const movements = {
     ArrowUp() {
       if ((player.position.y + player_size) < height) player.position.y += mov_speed;
@@ -120,6 +123,24 @@ const playerMovement = (key) => {
   if (moveFunction) moveFunction();
 }
 
-document.addEventListener("keydown", (event) => playerMovement(event.key));
+const playerMovement = () => {
+  keys_pressed.forEach(key => {
+    playerMovementByKey(key);
+  })
+}
+
+const addKey = (key) => {
+  let keys = keys_pressed.filter(key_pressed => key_pressed === key);
+  if (keys.length > 0) return;
+
+  keys_pressed.push(key);
+}
+
+const removeKey = (key) => {
+  keys_pressed = keys_pressed.filter(key_pressed => key_pressed !== key);
+}
+
+document.addEventListener("keydown", (event) => addKey(event.key));
+document.addEventListener("keyup", (event) => removeKey(event.key));
 
 render();
