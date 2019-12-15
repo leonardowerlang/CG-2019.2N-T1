@@ -4,17 +4,26 @@ var scene = new THREE.Scene();
 var aspect = window.innerHeight / window.innerWidth
 var width = 16;
 var height = 9;
+
 var player_size = 1.5;
-var max_teacher_speed = 0.1;
-
-var teacher_size = 2;
 var mov_speed = 0.2;
-var pressed_keys = [];
 
+var max_teacher_speed = 0.1;
+var teacher_size = 2;
 var randon_x = Math.random() * (0, max_teacher_speed);
 var randon_y = max_teacher_speed - randon_x;
-
 var dicrection = new THREE.Vector3(randon_x, randon_y, 0);
+
+var shot_delay = 5000;
+var shot_timer = null;
+var shot_speed = 0.2;
+
+var geometry = new THREE.PlaneGeometry(1.5, 0.5, 32);
+var material = new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide });
+const shot = new THREE.Mesh(geometry, material);
+var vector_shot = null;
+
+scene.add(shot);
 
 var camera = new THREE.OrthographicCamera(-width, width, height, -height, 1, 1000 );
 camera.position.z = 5;
@@ -42,9 +51,10 @@ material.map = texture;
 var player = new THREE.Mesh(geometry, material);
 scene.add(player);
 
-const render = () => {
+const render = (time) => {
   requestAnimationFrame(render);
   teacherMovement();
+  teacherShot(time);
 
   renderer.render(scene, camera);
 }
@@ -60,6 +70,21 @@ const teacherMovement = () => {
 
   teacher.position.x += dicrection.x;
   teacher.position.y += dicrection.y;
+}
+
+const teacherShot = (time) => {
+  if (!shot_timer) shot_timer = time;
+
+  if(time - shot_timer >  shot_delay) {
+    shot_timer = time;
+    shot.position.copy(teacher.position);
+    x =  player.position.x - teacher.position.x;
+    y =  player.position.y - teacher.position.y;
+    vector_shot = new THREE.Vector3( x, y, 0).normalize();
+  }
+  
+  
+  if (vector_shot) shot.position.addScaledVector(vector_shot, 0.1);
 }
 
 const playerMovement = (key) => {
