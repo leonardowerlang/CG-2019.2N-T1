@@ -1,8 +1,15 @@
-var emilio_face_url = "./emilio_face.png";
-var reproved = "./reproved.png";
+var teacher_skins = [
+  new THREE.TextureLoader().load('./skins/fernando.png'),
+  new THREE.TextureLoader().load('./skins/braulio.png'),
+  new THREE.TextureLoader().load('./skins/emilio.png'),
+  new THREE.TextureLoader().load('./skins/guilherme.png'),
+  new THREE.TextureLoader().load('./skins/marco.png'),
+];
+
+var player_skin = './skins/kadu.png';
+var reproved_skin = './skins/reproved.png';
 
 var scene = new THREE.Scene();
-var aspect = window.innerHeight / window.innerWidth
 var width = 16;
 var height = 9;
 
@@ -22,10 +29,9 @@ var shot_speed = 0.2;
 var keys_pressed = [];
 
 var geometry = new THREE.PlaneGeometry(2, 0.5, 32);
-var texture = new THREE.TextureLoader().load(reproved);
-var material = new THREE.MeshBasicMaterial();
-material.map = texture;
-const shot = new THREE.Mesh(geometry, material);
+var texture = new THREE.TextureLoader().load(reproved_skin);
+var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+var shot = new THREE.Mesh(geometry, material);
 shot.position.set(1000, 1000, 0)
 
 scene.add(shot);
@@ -38,21 +44,18 @@ renderer.setClearColor(0xE5E5E5)
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const light = new THREE.PointLight(0xFFFFFF, 1, 1000);
+var light = new THREE.PointLight(0xFFFFFF, 1, 1000);
 light.position.set(0, 0, 0);
 scene.add(light);
 
 var geometry = new THREE.CircleGeometry(teacher_size, 32);
-var texture = new THREE.TextureLoader().load(emilio_face_url);
-var material = new THREE.MeshBasicMaterial();
-material.map = texture;
+var material = new THREE.MeshBasicMaterial({ map: teacher_skins[0], transparent: true });
 var teacher = new THREE.Mesh(geometry, material);
 scene.add(teacher);
 
 var geometry = new THREE.CircleGeometry(player_size, 32);
-var texture = new THREE.TextureLoader().load(emilio_face_url);
-var material = new THREE.MeshBasicMaterial();
-material.map = texture;
+var texture = new THREE.TextureLoader().load(player_skin);
+var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
 var player = new THREE.Mesh(geometry, material);
 scene.add(player);
 
@@ -67,15 +70,22 @@ const render = (time) => {
 
 const teacherMovement = () => {
   if ((teacher.position.y + teacher_size) >= height || (teacher.position.y - teacher_size) < -height) {
+    changeTeacherSkin();
     dicrection.y *= -1;
   }
 
   if ((teacher.position.x + teacher_size) >= width || (teacher.position.x - teacher_size) < -width) {
+    changeTeacherSkin();
     dicrection.x *= -1;
   }
 
   teacher.position.x += dicrection.x;
   teacher.position.y += dicrection.y;
+}
+
+const changeTeacherSkin = () => {
+  teacher.material.map = teacher_skins[Math.floor(Math.random() * (0, 4))];
+  teacher.material.needsUpdate = true;
 }
 
 const teacherShot = (time) => {
@@ -103,7 +113,7 @@ const reset = () => {
 }
 
 const playerMovementByKey = (key) => {
-  const movements = {
+  var movements = {
     ArrowUp() {
       if ((player.position.y + player_size) < height) player.position.y += mov_speed;
     },
@@ -118,7 +128,7 @@ const playerMovementByKey = (key) => {
     }
   };
 
-  const moveFunction = movements[key];
+  var moveFunction = movements[key];
 
   if (moveFunction) moveFunction();
 }
