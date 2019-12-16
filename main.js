@@ -40,7 +40,7 @@ var camera = new THREE.OrthographicCamera(-width, width, height, -height, 1, 100
 camera.position.z = 5;
 
 var renderer = new THREE.WebGLRenderer();
-renderer.setClearColor(0xE5E5E5)
+renderer.setClearColor(0xE4FFE0);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -51,12 +51,14 @@ scene.add(light);
 var geometry = new THREE.CircleGeometry(teacher_size, 32);
 var material = new THREE.MeshBasicMaterial({ map: teacher_skins[0], transparent: true });
 var teacher = new THREE.Mesh(geometry, material);
+teacher.position.set(-10, 0, 0);
 scene.add(teacher);
 
 var geometry = new THREE.CircleGeometry(player_size, 32);
 var texture = new THREE.TextureLoader().load(player_skin);
 var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
 var player = new THREE.Mesh(geometry, material);
+player.position.set(10, 0, 0);
 scene.add(player);
 
 const render = (time) => {
@@ -70,12 +72,10 @@ const render = (time) => {
 
 const teacherMovement = () => {
   if ((teacher.position.y + teacher_size) >= height || (teacher.position.y - teacher_size) < -height) {
-    changeTeacherSkin();
     dicrection.y *= -1;
   }
 
   if ((teacher.position.x + teacher_size) >= width || (teacher.position.x - teacher_size) < -width) {
-    changeTeacherSkin();
     dicrection.x *= -1;
   }
 
@@ -84,7 +84,7 @@ const teacherMovement = () => {
 }
 
 const changeTeacherSkin = () => {
-  teacher.material.map = teacher_skins[Math.floor(Math.random() * (0, 4))];
+  teacher.material.map = teacher_skins[Math.floor(Math.random() * (0, 5))];
   teacher.material.needsUpdate = true;
 }
 
@@ -99,6 +99,7 @@ const teacherShot = (time) => {
     var vector_shot = new THREE.Vector3(x, y, 0);
     var angle = Math.atan2(vector_shot.y, vector_shot.x)
     shot.rotation.z = angle;
+    changeTeacherSkin();
   }
   
   shot.translateX(shot_speed);
@@ -106,8 +107,8 @@ const teacherShot = (time) => {
 }
 
 const reset = () => {
-  player.position.set(0, 0, 0);
-  teacher.position.set(0, 0, 0);
+  player.position.set(10, 0, 0);
+  teacher.position.set(-10, 0, 0);
   shot.position.set(1000, 1000, 0);
   shot_timer = null;
 }
